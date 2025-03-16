@@ -1,0 +1,6 @@
+@familyApp.Server_HostAddress = http://localhost:5044
+
+GET {{familyApp.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
