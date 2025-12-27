@@ -15,8 +15,19 @@ namespace familyApp.Server
                 .AddEnvironmentVariables()
                 .Build();
 
-            var cs = config.GetConnectionString("DefaultConnection")
-                     ?? "Data Source=familyERP.db"; // fallback dev
+            // 1) ENV first
+            var envPath = Environment.GetEnvironmentVariable("FAMILY_ERP_DB_PATH");
+
+            // 2) appsettings fallback
+            var cs = config.GetConnectionString("DefaultConnection");
+
+            // 3) ultimate fallback
+            if (string.IsNullOrWhiteSpace(envPath) && string.IsNullOrWhiteSpace(cs))
+                cs = "Data Source=.\\familyERP.db";
+
+            // Se c'è ENV, usiamo quello e ignoriamo la CS
+            if (!string.IsNullOrWhiteSpace(envPath))
+                cs = $"Data Source={envPath}";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
                 .UseSqlite(cs)
